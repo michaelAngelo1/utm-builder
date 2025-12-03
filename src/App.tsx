@@ -22,17 +22,23 @@ function App() {
   const [selectedIG, setSelectedIG] = useState<string>("");
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [videoName, setVideoName] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
   const igList = selectedBrand ? BRANDS[selectedBrand] : [];
   const productList = selectedBrand ? Object.keys(PRODUCTS[selectedBrand]) : [];
 
   const generatedLink = useMemo(() => {
-    if (!selectedBrand || !selectedIG || !selectedProduct || !videoName) {
+    if (!selectedBrand || !selectedIG || !selectedProduct || !videoName || !date) {
       return "";
     }
 
     const productUrl = PRODUCTS[selectedBrand][selectedProduct];
+    
+    // Safety check for product URL
+    if (!productUrl) return "Error: Product URL not found.";
+
     const ids = extractIds(productUrl);
 
     if (!ids) {
@@ -41,14 +47,30 @@ function App() {
 
     const { shopId, productId } = ids;
 
-    // Campaign Logic: slugify(ig)-slugify(video)-slugify(product)
-    const campaignSlug = `${slugify(selectedIG)}-${slugify(videoName)}-${slugify(selectedProduct)}`;
+    // --- NEW DATE FORMATTING LOGIC ---
+    // 1. Split the date string (YYYY-MM-DD) to avoid timezone issues
+    const [_year, _month, _day] = date.split('-');
+    
+    // 2. Define Indonesian short months
+    const months = ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "agu", "sep", "okt", "nov", "des"];
+    
+    // 3. Convert to integers to remove leading zeros (e.g., "03" -> 3) and get array index
+    const dayInt = parseInt(_day, 10);
+    const monthIndex = parseInt(_month, 10) - 1;
+
+    // 4. Combine: "3" + "des" = "3des"
+    const formattedDate = `${dayInt}${months[monthIndex]}`;
+    // ---------------------------------
+
+    // Campaign Logic: slugify(ig)-slugify(video)-formattedDate-slugify(product)
+    const combinedSlug = `${slugify(videoName)}${formattedDate}`;
+    const campaignSlug = `${slugify(selectedIG)}-${combinedSlug}-${slugify(selectedProduct)}`;
     
     // UTM Campaign: s{shop_id}_SS_ID__{slugify(brand)}-{campaign}
     const utmCampaign = `s${shopId}_SS_ID__${slugify(selectedBrand)}-${campaignSlug}`;
 
     return `https://shopee.co.id/universal-link/product/${shopId}/${productId}?smtt=9&utm_source=instagram&utm_medium=seller&utm_campaign=${utmCampaign}&utm_content=&deep_and_web=1`;
-  }, [selectedBrand, selectedIG, selectedProduct, videoName]);
+  }, [selectedBrand, selectedIG, selectedProduct, videoName, date, BRANDS, PRODUCTS]);
 
   const handleReset = () => {
     setSelectedBrand("");
@@ -56,6 +78,7 @@ function App() {
     setSelectedProduct("");
     setVideoName("");
     setCopyFeedback(false);
+    setDate("");
   };
 
   const handleCopy = () => {
@@ -75,7 +98,7 @@ function App() {
           <h1 className="text-3xl text-primary font-regular">UTM Builder</h1>
         </div>
         
-        <div className='card w-full h-[500px] shadow-md mx-auto rounded-xl p-4'>
+        <div className='card w-full h-[600px] shadow-md mx-auto rounded-xl p-4'>
           {
             loading ?
               <div className='m-auto'>
@@ -142,25 +165,32 @@ function App() {
               </div>
 
               <div className='text-md font-medium mt-3'>Video Name & Date</div>
-              <input 
-                type="text" 
-                placeholder="Insert video name & date" 
-                className='input w-full mt-2'
-                onChange={(e) => setVideoName(e.target.value)}
-                disabled={!selectedProduct}
-              />
+              <div className='flex items-center gap-3 mt-2'>
+                <input 
+                  type="text" 
+                  placeholder="Insert video name & date" 
+                  className='input w-full'
+                  onChange={(e) => setVideoName(e.target.value)}
+                  disabled={!selectedProduct}
+                  value={videoName}
+                />
+                <input value={date} disabled={!videoName} type="date" className="input" onChange={(e) => {
+                  setDate(e.target.value);
+                }} />
+              </div>
 
               <div className='text-md font-medium mt-3'>Your UTM link</div>
-              <input
+              {/* <input
                 disabled={!videoName} 
                 type="text" 
                 placeholder="Your UTM Link" 
                 className='input w-full mt-2'
                 value={generatedLink}
-              />
+              /> */}
+              <textarea disabled={!videoName || !date} className="textarea textarea-base w-full h-36 mt-2" placeholder="Your UTM Link" value={generatedLink}></textarea>
 
               <div className='flex justify-center gap-3'>
-                <button onClick={() => handleReset()} className={`btn btn-warning mt-4 w-fit`}>Reset</button>
+                <button onClick={() => handleReset()} className={`btn btn-ghost mt-4 w-fit`}>Reset</button>
                 <button disabled={!generatedLink} onClick={() => handleCopy()} className={`btn mt-4 w-fit ${copyFeedback ? "btn-secondary" : "btn-primary"}`}>{copyFeedback ? "Copied!" : "Copy link"}</button>
               </div>
             </>
