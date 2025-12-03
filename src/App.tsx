@@ -106,7 +106,9 @@ function App() {
                   {
                     Object.keys(BRANDS).map((brand) => (
                       <li>
-                        <a onMouseDown={() => {
+                        <a 
+                        className='text-md font-medium'
+                        onMouseDown={() => {
                           console.log(brand);
                           setSelectedBrand(brand);
                           setSelectedIG("");
@@ -129,7 +131,7 @@ function App() {
                 <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
                   {
                     igList.map(ig => (
-                      <li><a onMouseDown={() => { setSelectedIG(ig) }}>{ig}</a></li>
+                      <li><a className='text-md font-medium' onMouseDown={() => { setSelectedIG(ig) }}>{ig}</a></li>
                     ))
                   }
                 </ul>
@@ -144,7 +146,7 @@ function App() {
                 <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
                   {
                     productList.map(prod => (
-                      <li><a onMouseDown={() => { setSelectedProduct(prod)}}>{prod}</a></li>
+                      <li><a className='text-md font-medium' onMouseDown={() => { setSelectedProduct(prod)}}>{prod}</a></li>
                     ))
                   }
                 </ul>
@@ -154,14 +156,14 @@ function App() {
               <input 
                 type="text" 
                 placeholder="Insert video name" 
-                className='input w-full mt-2'
+                className='input w-full mt-2 text-md font-medium'
                 onChange={(e) => setVideoName(e.target.value)}
                 disabled={!selectedProduct}
                 value={videoName}
               />
 
               <div className='text-md font-medium mt-3'>Insert video date</div>
-              <input value={date} disabled={!videoName} type="date" placeholder='Select date' className="input w-full mt-2" onChange={(e) => {
+              <input value={date} disabled={!videoName} type="date" placeholder='Select date' className="input w-full mt-2 text-md font-medium" onChange={(e) => {
                 setDate(e.target.value);
               }} />
 
@@ -173,7 +175,7 @@ function App() {
                 className='input w-full mt-2'
                 value={generatedLink}
               /> */}
-              <textarea disabled={!videoName || !date} className="textarea textarea-base w-full h-36 mt-2" placeholder="Your UTM Link" value={generatedLink}></textarea>
+              <textarea disabled={!videoName || !date} className="textarea textarea-base w-full h-36 mt-2 text-md font-medium" placeholder="Your UTM Link" value={generatedLink}></textarea>
 
               <div className='flex justify-center gap-3'>
                 <button onClick={() => handleReset()} className={`btn btn-ghost mt-4 w-fit`}>Reset</button>
