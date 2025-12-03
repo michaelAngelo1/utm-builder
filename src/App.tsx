@@ -112,6 +112,7 @@ function App() {
                           setSelectedIG("");
                           setSelectedProduct("");
                           setVideoName("");
+                          setDate("");
                         }}>{brand}</a>
                       </li>
                     ))
