@@ -161,7 +161,7 @@ function App() {
               />
 
               <div className='text-md font-medium mt-3'>Insert video date</div>
-              <input value={date} disabled={!videoName} type="date" className="input w-full mt-2" onChange={(e) => {
+              <input value={date} disabled={!videoName} type="date" placeholder='Select date' className="input w-full mt-2" onChange={(e) => {
                 setDate(e.target.value);
               }} />
 
