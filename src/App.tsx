@@ -47,23 +47,8 @@ function App() {
 
     const { shopId, productId } = ids;
 
-    // --- NEW DATE FORMATTING LOGIC ---
-    // 1. Split the date string (YYYY-MM-DD) to avoid timezone issues
-    const [_year, _month, _day] = date.split('-');
-    
-    // 2. Define Indonesian short months
-    const months = ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "agu", "sep", "okt", "nov", "des"];
-    
-    // 3. Convert to integers to remove leading zeros (e.g., "03" -> 3) and get array index
-    const dayInt = parseInt(_day, 10);
-    const monthIndex = parseInt(_month, 10) - 1;
-
-    // 4. Combine: "3" + "des" = "3des"
-    const formattedDate = `${dayInt}${months[monthIndex]}`;
-    // ---------------------------------
-
     // Campaign Logic: slugify(ig)-slugify(video)-formattedDate-slugify(product)
-    const combinedSlug = `${slugify(videoName)}${formattedDate}`;
+    const combinedSlug = `${slugify(videoName)}-${date}`;
     const campaignSlug = `${slugify(selectedIG)}-${combinedSlug}-${slugify(selectedProduct)}`;
     
     // UTM Campaign: s{shop_id}_SS_ID__{slugify(brand)}-{campaign}
@@ -98,7 +83,7 @@ function App() {
           <h1 className="text-3xl text-primary font-regular">UTM Builder</h1>
         </div>
         
-        <div className='card w-full h-[600px] shadow-md mx-auto rounded-xl p-4'>
+        <div className='card w-full h-[680px] shadow-md mx-auto rounded-xl p-4'>
           {
             loading ?
               <div className='m-auto'>
@@ -134,7 +119,7 @@ function App() {
                 </ul>
               </div>
 
-              <div className='text-md font-medium mt-3'>Select IG Account</div>
+              <div className='text-md font-medium mt-3'>Select IG account</div>
               <div onClick={() => !selectedBrand && alert("Please select a brand first.")} className='dropdown'>
                 <div tabIndex={0} role="button" className="btn mt-2 w-full flex items-center justify-between">
                   <div className='text-md font-medium'>{ selectedIG ? selectedIG : "Select IG Account" }</div>
@@ -164,20 +149,20 @@ function App() {
                 </ul>
               </div>
 
-              <div className='text-md font-medium mt-3'>Video Name & Date</div>
-              <div className='flex items-center gap-3 mt-2'>
-                <input 
-                  type="text" 
-                  placeholder="Insert video name & date" 
-                  className='input w-full'
-                  onChange={(e) => setVideoName(e.target.value)}
-                  disabled={!selectedProduct}
-                  value={videoName}
-                />
-                <input value={date} disabled={!videoName} type="date" className="input" onChange={(e) => {
-                  setDate(e.target.value);
-                }} />
-              </div>
+              <div className='text-md font-medium mt-3'>Insert video name</div>
+              <input 
+                type="text" 
+                placeholder="Insert video name" 
+                className='input w-full mt-2'
+                onChange={(e) => setVideoName(e.target.value)}
+                disabled={!selectedProduct}
+                value={videoName}
+              />
+
+              <div className='text-md font-medium mt-3'>Insert video date</div>
+              <input value={date} disabled={!videoName} type="date" className="input w-full mt-2" onChange={(e) => {
+                setDate(e.target.value);
+              }} />
 
               <div className='text-md font-medium mt-3'>Your UTM link</div>
               {/* <input
