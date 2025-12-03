@@ -102,7 +102,7 @@ function App() {
                   </div>
                   <div></div>
                 </div>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm h-[400px] overflow-auto">
+                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg h-[400px] overflow-auto">
                   {
                     Object.keys(BRANDS).map((brand) => (
                       <li>
@@ -128,7 +128,7 @@ function App() {
                   <div className='text-md font-medium'>{ selectedIG ? selectedIG : "Select IG Account" }</div>
                   <div></div>
                 </div>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
+                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
                   {
                     igList.map(ig => (
                       <li><a className='text-md font-medium' onMouseDown={() => { setSelectedIG(ig) }}>{ig}</a></li>
@@ -143,7 +143,7 @@ function App() {
                   <div className='text-md font-medium'>{selectedProduct ? selectedProduct : "Select a product"}</div>
                   <div></div>
                 </div>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
+                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
                   {
                     productList.map(prod => (
                       <li><a className='text-md font-medium' onMouseDown={() => { setSelectedProduct(prod)}}>{prod}</a></li>
