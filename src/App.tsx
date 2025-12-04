@@ -23,6 +23,7 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [videoName, setVideoName] = useState<string>("");
   const [date, setDate] = useState<string>("");
+  const [identifier, setIdentifier] = useState("");
 
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
@@ -30,7 +31,7 @@ function App() {
   const productList = selectedBrand ? Object.keys(PRODUCTS[selectedBrand]) : [];
 
   const generatedLink = useMemo(() => {
-    if (!selectedBrand || !selectedIG || !selectedProduct || !videoName || !date) {
+    if (!selectedBrand || !selectedIG || !selectedProduct || !videoName || !date || !identifier) {
       return "";
     }
 
@@ -49,13 +50,13 @@ function App() {
 
     // Campaign Logic: slugify(ig)-slugify(video)-formattedDate-slugify(product)
     const combinedSlug = `${slugify(videoName)}-${date}`;
-    const campaignSlug = `${slugify(selectedIG)}-${combinedSlug}-${slugify(selectedProduct)}`;
+    const campaignSlug = `${slugify(selectedIG)}-${identifier}-${combinedSlug}-${slugify(selectedProduct)}`;
     
     // UTM Campaign: s{shop_id}_SS_ID__{slugify(brand)}-{campaign}
     const utmCampaign = `s${shopId}_SS_ID__${slugify(selectedBrand)}-${campaignSlug}`;
 
-    return `https://shopee.co.id/universal-link/product/${shopId}/${productId}?smtt=9&utm_source=instagram&utm_medium=seller&utm_campaign=${utmCampaign}&utm_content=&deep_and_web=1`;
-  }, [selectedBrand, selectedIG, selectedProduct, videoName, date, BRANDS, PRODUCTS]);
+    return `https://shopee.co.id/universal-link/product/${shopId}/${productId}?smtt=9&utm_source=instagramads&utm_medium=seller&utm_campaign=${utmCampaign}&utm_content=&deep_and_web=1`;
+  }, [selectedBrand, selectedIG, selectedProduct, videoName, date, BRANDS, PRODUCTS, identifier]);
 
   const handleReset = () => {
     setSelectedBrand("");
@@ -78,12 +79,12 @@ function App() {
     <div className="min-h-screen py-10 px-4">
       <div className="max-w-lg mx-auto space-y-4 flex flex-col gap-0">
         
-        <div className="flex justify-center items-center gap-0">
+        <div className="flex flex-col items-center gap-0">
           <img className='w-40' src={rocketLogo} alt="Rocketindo logo" />
-          <h1 className="text-3xl text-primary font-regular">UTM Builder</h1>
+          <h1 className="text-3xl text-primary font-regular">Internal UTM Builder</h1>
         </div>
         
-        <div className='card w-full h-[680px] shadow-md mx-auto rounded-xl p-4'>
+        <div className='card w-full h-[740px] shadow-md mx-auto rounded-xl p-4'>
           {
             loading ?
               <div className='m-auto'>
@@ -128,13 +129,16 @@ function App() {
                   <div className='text-md font-medium'>{ selectedIG ? selectedIG : "Select IG Account" }</div>
                   <div></div>
                 </div>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
-                  {
-                    igList.map(ig => (
-                      <li><a className='text-md font-medium' onMouseDown={() => { setSelectedIG(ig) }}>{ig}</a></li>
-                    ))
-                  }
-                </ul>
+                {
+                  selectedBrand && 
+                  <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
+                    {
+                      igList.map(ig => (
+                        <li><a className='text-md font-medium' onMouseDown={() => { setSelectedIG(ig) }}>{ig}</a></li>
+                      ))
+                    }
+                  </ul>
+                }
               </div>
 
               <div className='text-md font-medium mt-3'>Select product</div>
@@ -143,13 +147,16 @@ function App() {
                   <div className='text-md font-medium'>{selectedProduct ? selectedProduct : "Select a product"}</div>
                   <div></div>
                 </div>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
-                  {
-                    productList.map(prod => (
-                      <li><a className='text-md font-medium' onMouseDown={() => { setSelectedProduct(prod)}}>{prod}</a></li>
-                    ))
-                  }
-                </ul>
+                {
+                  selectedIG && 
+                  <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
+                    {
+                      productList.map(prod => (
+                        <li><a className='text-md font-medium' onMouseDown={() => { setSelectedProduct(prod)}}>{prod}</a></li>
+                      ))
+                    }
+                  </ul>
+                }
               </div>
 
               <div className='text-md font-medium mt-3'>Insert video name</div>
@@ -167,6 +174,21 @@ function App() {
                 setDate(e.target.value);
               }} />
 
+              <div className='text-md font-medium mt-3'>Choose an identifier</div>
+              <div onClick={() => {!date && alert("Select a video date first.")}} className='dropdown'>
+                <div tabIndex={0} role="button" className="btn mt-2 w-full flex items-center justify-between">
+                  <div className='text-md font-medium'>{identifier ? identifier : "Select an identifier"}</div>
+                  <div></div>
+                </div>
+                {
+                  date && 
+                  <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-lg">
+                    <li><a className='text-md font-medium' onMouseDown={() => { setIdentifier("shopeelink")}}>shopeelink</a></li>
+                    <li><a className='text-md font-medium' onMouseDown={() => { setIdentifier("shopeeconversion")}}>shopeeconversion</a></li>
+                  </ul>
+                }
+              </div>
+
               <div className='text-md font-medium mt-3'>Your UTM link</div>
               {/* <input
                 disabled={!videoName} 
@@ -175,7 +197,7 @@ function App() {
                 className='input w-full mt-2'
                 value={generatedLink}
               /> */}
-              <textarea disabled={!videoName || !date} className="textarea textarea-base w-full h-36 mt-2 text-md font-medium" placeholder="Your UTM Link" value={generatedLink}></textarea>
+              <textarea disabled={!videoName || !date || !identifier} className="textarea textarea-base w-full h-36 mt-2 text-md font-medium" placeholder="Your UTM Link" value={generatedLink}></textarea>
 
               <div className='flex justify-center gap-3'>
                 <button onClick={() => handleReset()} className={`btn btn-ghost mt-4 w-fit`}>Reset</button>
